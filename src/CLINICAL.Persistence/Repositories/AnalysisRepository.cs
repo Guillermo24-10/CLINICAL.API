@@ -20,13 +20,61 @@ namespace CLINICAL.Persistence.Repositories
             _context = context;
         }
 
+        public async Task<Analysis> AnalysisById(int id)
+        {
+            using (var connection = _context.CreateConnection)
+            {
+                var query = "uspAnalysisById";
+                var parameters = new DynamicParameters();
+                parameters.Add("@AnalysisId", id);
+
+                var analysis = await connection
+                    .QuerySingleOrDefaultAsync<Analysis>(query, param: parameters, commandType: CommandType.StoredProcedure);
+
+                return analysis!;
+            }
+        }
+
+        public async Task<bool> AnalysisEdit(Analysis analysis)
+        {
+            using (var connection = _context.CreateConnection)
+            {
+                var query = "uspAnalysisEdit";
+                var parameters = new DynamicParameters();
+                parameters.Add("@AnalysisId", analysis.AnalysisId);
+                parameters.Add("@Name", analysis.Name);
+
+                var recordAffected = await connection
+                    .ExecuteAsync(query,param: parameters, commandType: CommandType.StoredProcedure);
+
+                return recordAffected > 0;
+            }
+        }
+
+        public async Task<bool> AnalysisRegister(Analysis analysis)
+        {
+            using (var connection = _context.CreateConnection)
+            {
+                var query = "uspAnalysisRegister";
+                var parameters = new DynamicParameters();
+                parameters.Add("@Name", analysis.Name);
+                parameters.Add("@State", 1);
+                parameters.Add("@AuditCreateDate", DateTime.Now);
+
+                var recordAffected = await connection
+                    .ExecuteAsync(query, param: parameters, commandType: CommandType.StoredProcedure);
+
+                return recordAffected > 0;
+            }
+        }
+
         public async Task<IEnumerable<Analysis>> ListAnalysis()
         {
             using (var connection = _context.CreateConnection)
             {
                 var query = "uspAnalysisList";
 
-                var analysis = await connection.QueryAsync<Analysis>(query,commandType:CommandType.StoredProcedure);
+                var analysis = await connection.QueryAsync<Analysis>(query, commandType: CommandType.StoredProcedure);
 
                 return analysis;
             }
