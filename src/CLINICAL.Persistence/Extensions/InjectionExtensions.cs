@@ -1,4 +1,4 @@
-﻿using CLINICAL.Application.Interfaces;
+﻿using CLINICAL.Application.Interfaces.Interfaces;
 using CLINICAL.Persistence.Context;
 using CLINICAL.Persistence.Repositories;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,7 +15,8 @@ namespace CLINICAL.Persistence.Extensions
         public static IServiceCollection AddInjectionPersistence(this IServiceCollection services)
         {
             services.AddSingleton<ApplicationDbContext>();//solo hay una instancia de ApplicationDbContext
-            services.AddScoped<IAnalysisRepository,AnalysisRepository>();
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddTransient<IUnitOfWork,UnitOfWork>();
 
             return services;
         }

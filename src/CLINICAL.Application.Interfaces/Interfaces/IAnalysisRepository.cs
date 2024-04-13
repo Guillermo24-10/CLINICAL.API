@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CLINICAL.Application.Interfaces
+namespace CLINICAL.Application.Interfaces.Interfaces
 {
     public interface IAnalysisRepository
     {
@@ -13,5 +13,6 @@ namespace CLINICAL.Application.Interfaces
         Task<Analysis> AnalysisById(int id);
         Task<bool> AnalysisRegister(Analysis analysis);
         Task<bool> AnalysisEdit(Analysis analysis);
+        Task<bool> AnalysisRemove(int id);
     }
 }

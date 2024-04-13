@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CLINICAL.Application.Interfaces;
+using CLINICAL.Application.Interfaces.Interfaces;
 using CLINICAL.Application.UseCase.Commons.Bases;
 using MediatR;
 using Entity = CLINICAL.Domain.Entities;
@@ -8,13 +8,14 @@ namespace CLINICAL.Application.UseCase.UseCases.Analysis.Commands.CreateCommand
 {
     public class CreateAnalysisHandler : IRequestHandler<CreateAnalysisCommand, BaseResponse<bool>>
     {
-        private readonly IAnalysisRepository _analysisRepository;
+       
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly CreateAnalysisValidator _validacion;
 
-        public CreateAnalysisHandler(IAnalysisRepository analysisRepository, IMapper mapper, CreateAnalysisValidator validacion)
+        public CreateAnalysisHandler(IUnitOfWork unitOfWork, IMapper mapper, CreateAnalysisValidator validacion)
         {
-            _analysisRepository = analysisRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
             _validacion = validacion;
         }
@@ -27,7 +28,8 @@ namespace CLINICAL.Application.UseCase.UseCases.Analysis.Commands.CreateCommand
             {
                 
                 var analysis = _mapper.Map<Entity.Analysis>(request);
-                response.Data = await _analysisRepository.AnalysisRegister(analysis);
+                var paremeters = new { analysis.Name};
+                response.Data = await _unitOfWork.Analysis.ExecAsync("uspAnalysisRegister", paremeters);
 
                 if (response.Data)
                 {
