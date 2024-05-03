@@ -2,6 +2,7 @@
 using CLINICAL.Application.DTOS.Analysis.Response;
 using CLINICAL.Application.Interfaces.Interfaces;
 using CLINICAL.Application.UseCase.Commons.Bases;
+using CLINICAL.Utilities.Constantes;
 using MediatR;
 
 namespace CLINICAL.Application.UseCase.UseCases.Analysis.Queries.GetALLQuery
@@ -24,13 +25,13 @@ namespace CLINICAL.Application.UseCase.UseCases.Analysis.Queries.GetALLQuery
 
             try
             {
-                var analysis = await _unitOfWork.Analysis.GetAllAsync("uspAnalysisList");
+                var analysis = await _unitOfWork.Analysis.GetAllAsync(StoredProcedures.uspAnalysisList);
 
                 if (analysis is not null)
                 {
                     response.IsSuccess = true;
                     response.Data = _mapper.Map<IEnumerable<GetAllAnalysisResponseDto>>(analysis);
-                    response.Message = "Consulta Exitosa!";
+                    response.Message = GlobalMessage.MESSAGE_QUERY;
                 }
             }
             catch (Exception ex)

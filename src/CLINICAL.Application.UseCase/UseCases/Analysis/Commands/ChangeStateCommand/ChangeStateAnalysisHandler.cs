@@ -4,22 +4,27 @@ using CLINICAL.Application.UseCase.Commons.Bases;
 using CLINICAL.Utilities.Constantes;
 using CLINICAL.Utilities.HelpersExtensions;
 using MediatR;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Entity = CLINICAL.Domain.Entities;
 
-namespace CLINICAL.Application.UseCase.UseCases.Analysis.Commands.UpdateCommand
+namespace CLINICAL.Application.UseCase.UseCases.Analysis.Commands.ChangeStateCommand
 {
-    public class UpdateAnalysisHandler : IRequestHandler<UpdateAnalysisCommand, BaseResponse<bool>>
+    public class ChangeStateAnalysisHandler : IRequestHandler<ChangeStateAnalysisCommand, BaseResponse<bool>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public UpdateAnalysisHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public ChangeStateAnalysisHandler(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
-        public async Task<BaseResponse<bool>> Handle(UpdateAnalysisCommand request, CancellationToken cancellationToken)
+        public async Task<BaseResponse<bool>> Handle(ChangeStateAnalysisCommand request, CancellationToken cancellationToken)
         {
             var response = new BaseResponse<bool>();
 
@@ -27,12 +32,12 @@ namespace CLINICAL.Application.UseCase.UseCases.Analysis.Commands.UpdateCommand
             {
                 var analysis = _mapper.Map<Entity.Analysis>(request);
                 var parameters = analysis.GetPropertiesWithValues();
-                response.Data = await _unitOfWork.Analysis.ExecAsync(StoredProcedures.uspAnalysisEdit, parameters);
+                response.Data = await _unitOfWork.Analysis.ExecAsync(StoredProcedures.uspAnalysisChangeState, parameters);
 
                 if (response.Data)
                 {
                     response.IsSuccess = true;
-                    response.Message = GlobalMessage.MESSAGE_UPDATE;
+                    response.Message = GlobalMessage.MESSAGE_UPDATE_STATE;
                 }
             }
             catch (Exception ex)

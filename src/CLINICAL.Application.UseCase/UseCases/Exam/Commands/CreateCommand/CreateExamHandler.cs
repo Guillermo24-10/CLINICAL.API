@@ -6,33 +6,33 @@ using CLINICAL.Utilities.HelpersExtensions;
 using MediatR;
 using Entity = CLINICAL.Domain.Entities;
 
-namespace CLINICAL.Application.UseCase.UseCases.Analysis.Commands.UpdateCommand
+namespace CLINICAL.Application.UseCase.UseCases.Exam.Commands.CreateCommand
 {
-    public class UpdateAnalysisHandler : IRequestHandler<UpdateAnalysisCommand, BaseResponse<bool>>
+    public class CreateExamHandler : IRequestHandler<CreateExamCommand, BaseResponse<bool>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public UpdateAnalysisHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public CreateExamHandler(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
-        public async Task<BaseResponse<bool>> Handle(UpdateAnalysisCommand request, CancellationToken cancellationToken)
+        public async Task<BaseResponse<bool>> Handle(CreateExamCommand request, CancellationToken cancellationToken)
         {
             var response = new BaseResponse<bool>();
 
             try
             {
-                var analysis = _mapper.Map<Entity.Analysis>(request);
-                var parameters = analysis.GetPropertiesWithValues();
-                response.Data = await _unitOfWork.Analysis.ExecAsync(StoredProcedures.uspAnalysisEdit, parameters);
+                var exam = _mapper.Map<Entity.Exam>(request);
+                var parameters = exam.GetPropertiesWithValues();
+                response.Data = await _unitOfWork.Exam.ExecAsync(StoredProcedures.uspExamRegister, parameters);
 
                 if (response.Data)
                 {
                     response.IsSuccess = true;
-                    response.Message = GlobalMessage.MESSAGE_UPDATE;
+                    response.Message = GlobalMessage.MESSAGE_SAVE;
                 }
             }
             catch (Exception ex)
